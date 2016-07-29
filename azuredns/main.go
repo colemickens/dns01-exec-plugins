@@ -18,7 +18,11 @@ import (
 )
 
 type Config struct {
-	ProjectID string `json:"project_id"`
+	ResourceGroup   string `json:"resourceGroup"`
+	SubscriptionID  string `json:"subscriptionId"`
+	TenantID        string `json:"tenantId"`
+	AADClientID     string `json:"aadClientId"`
+	AADClientSecret string `json:"aadClientSecret"`
 }
 
 func main() {
@@ -32,14 +36,14 @@ func main() {
 		os.Exit(3)
 	}
 
-	serviceAccount, err := ioutil.ReadAll(os.Stdin)
+	secretBlob, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		io.WriteString(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 
 	var config Config
-	err = json.Unmarshal(serviceAccount, &config)
+	err = json.Unmarshal(secretBlob, &config)
 	if err != nil {
 		io.WriteString(os.Stderr, err.Error())
 		os.Exit(2)
@@ -47,7 +51,7 @@ func main() {
 
 	c, err := newClient(serviceAccount, config.ProjectID, domain)
 	if err != nil {
-		io.WriteString(os.Stderr, "Error creating google DNS client"+err.Error())
+		io.WriteString(os.Stderr, "Error creating azure DNS client"+err.Error())
 		os.Exit(1)
 	}
 
